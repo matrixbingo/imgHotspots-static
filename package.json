@@ -1,0 +1,21 @@
+{
+  "scripts": {
+    "build": "./node_modules/.bin/webpack --progress --colors --bail",
+    "dev": "./node_modules/.bin/webpack --progress --colors --config ./webpack.dev.config.js",
+    "start": "./node_modules/.bin/webpack-dev-server --config ./webpack.dev.config.js --open --hot",
+    "profile": "./node_modules/.bin/webpack --colors --profile --display-modules --config ./webpack.dev.config.js",
+    "dll": "./node_modules/.bin/webpack --progress --colors --config ./webpack-dll.config.js",
+    "analyse": "webpack --json > ./build/stats.json && webpack-bundle-analyzer --port 8989 ./build/stats.json",
+    "analyze": "npm run analyse"
+  },
+  "dependencies": {
+    "gulp": "^3.9.0",
+    "gulp-connect": "^2.2.0",
+    "gulp-less": "^3.0.3",
+    "gulp-open": "^1.0.0",
+    "gulp-util": "^3.0.7",
+    "html-webpack-plugin": "^2.30.1",
+    "webpack": "^3.4.1",
+    "webpack-dev-server": "^3.1.4"
+  }
+}

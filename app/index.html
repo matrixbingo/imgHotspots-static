@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>地图打点工具</title>
+	<link href="common/imgCut/main.css" type="text/css" rel="stylesheet" />
+	<meta charset="UTF-8" />
+    <script type="text/javascript" src="common/jquery/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="common/imgCut/imgCut.js"></script>
+
+    <!--easyui 1.4 -->
+    <link rel="stylesheet" type="text/css" href="common/jquery-easyui-1.4/easyui.css">
+    <link rel="stylesheet" type="text/css" href="common/jquery-easyui-1.4/icon.css">
+    <script type="text/javascript" src="common/jquery-easyui-1.4/jquery.easyui.min.js"></script>
+
+    <!-- msg -->
+    <link rel="stylesheet" type="text/css" href="common/jquery.msg/jquery.msg.css">
+    <script type="text/javascript" src="common/jquery.msg/jquery.msg.js"></script>
+    <script type="text/javascript" src="common/imgCut/jquery.corner.js"></script>
+
+    <script type="text/javascript" src="common/imgCut/utils.js"></script>
+    <script type="text/javascript" src="common/imgCut/grouponHotImgCut.js"></script>
+    <script type="text/javascript">
+
+    </script>
+
+</head>
+<body>
+
+<div id="wrapper" style="width: 900">
+	<header id="header">
+		<h1 id="logo">
+
+		</h1>
+		<nav id="nav" class="clearfix">
+			<ul>
+                <li id="show_help"><a href="#">帮助</a></li>
+				<li id="save"><a href="#">save</a></li>
+				<li id="load"><a href="#">load</a></li>
+				<li id="from_html"><a href="#">from html</a></li>
+                <a href="#" class="easyui-menubutton" data-options="menu:'#mm2',iconCls:'icon-edit'" style="padding: 0px 0px;">画图</a>
+                <div id="mm2" style="width:100px;">
+                    <div id="rect">矩形</div>
+                    <div id="circle">圆形</div>
+                    <div id="polygon">多边形</div>
+                </div>
+				<!--<li ><a href="#">矩形</a></li>-->
+				<!--<li ><a href="#">圆形</a></li>-->
+				<!--<li ><a href="#">多边形</a></li>-->
+				<li id="edit"><a href="#">编辑</a></li>
+				<li id="to_html"><a href="#">html</a></li>
+				<li id="preview"><a href="#">预览</a></li>
+				<li id="clear"><a href="#">清空</a></li>
+				<li id="new_image"><a href="#">new image</a></li>
+                <li id="test1"><a href="#">重新加载</a></li>
+                <li id="test2"><a href="#">保存</a></li>
+			</ul>
+		</nav>
+        <div id="img_cut"></div>
+        <div id="img_num"></div>
+		<div id="coords_text">当前位置</div>
+        <div id="coords"></div>
+		<div id="debug"></div>
+	</header>	
+	<div id="image_wrapper">
+		<div id="image">
+			<img src="" alt="#" id="img" />
+			<svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" id="svg"></svg>
+		</div>
+	</div>
+</div>
+
+<!-- For html image map code -->
+<div id="code">
+	<span class="close_button" title="close"></span>
+	<div id="code_content"></div>
+</div>
+
+<!-- 属性编辑框-->
+<form id="edit_details">
+	<h5>热区设置</h5>
+	<span class="close_button" title="close"></span>
+	<p id="hotimg_p1">
+		<label for="href_attr">链接地址</label>
+		<input type="text" id="href_attr" />
+	</p>
+	<p id="hotimg_p2">
+		<label for="alt_attr">alt</label>
+		<input type="text" id="alt_attr" />
+	</p>
+	<p id="hotimg_p3">
+		<label for="title_attr">title</label>
+		<input type="text" id="title_attr" />
+	</p>
+    <p>
+        <label for="action_type">热区类型</label>
+        <input type="text" id="action_type" value="0"/>
+    </p>
+    <p>
+        <label for="hover_img">显示图片</label>
+        <input type="text" id="hover_img" />
+    </p>
+    <p>
+        <label for="hover_message">提示信息</label>
+        <input type="text" id="hover_message" />
+    </p>
+    <p>
+        <label for="click_message">点击信息</label>
+        <input type="text" id="click_message" />
+    </p>
+    <p>
+        <label for="click_link">点击链接</label>
+        <input type="text" id="click_link" />
+    </p>
+	<button id="save_details">保存</button>
+    <!--<button id="save_details_text">保存11</button>-->
+</form>
+
+<!-- From html block -->
+<div id="from_html_wrapper">
+	<form id="from_html_form">
+		<h5>Loading areas</h5>
+		<span class="close_button" title="close"></span>
+		<p>
+			<label for="code_input">Enter your html code:</label>
+			<textarea id="code_input"></textarea>
+		</p>
+		<button id="load_code_button">Load</button>
+	</form>
+</div>
+  
+<!-- Get image form -->
+<div id="get_image_wrapper">
+	<div id="get_image">
+
+		<div id="loading">Loading</div>
+		<div id="file_reader_support">
+			<label></label>
+			<div id="dropzone">
+				<span class="clear_button" title="clear">x</span>
+				<img src="" alt="preview" id="sm_img" />
+			</div>
+		</div>
+		<label for="url">图片地址</label>
+		<span id="url_wrapper">
+			<span class="clear_button" title="clear">x</span>
+			<input type="text" id="url" />
+		</span>
+		<button id="button">确定</button>
+	</div>
+</div>
+
+<!-- Help block -->
+<div id="overlay"></div>
+<div id="help">
+	<span class="close_button" title="close"></span>
+	<div class="txt">
+		<!--<section>-->
+			<!--<h2>主要</h2>-->
+			<!--<p><span class="key">F5</span> &mdash;刷新页面</p>-->
+			<!--<p><span class="key">S</span> &mdash; 保存临时数据</p>-->
+		<!--</section>-->
+		<section>
+			<h2>画打点区域 (矩形 / 圆形 / 多边形)</h2>
+			<p><span class="key">ENTER</span> &mdash; 停止画区域</p>
+			<p><span class="key">ESC</span> &mdash; 取消当前绘制</p>
+			<!-- <p><span class="key">SHIFT</span> &mdash; square drawing in case of a rectangle and right angle drawing in case of a polygon</p> -->
+		</section>
+		<section>
+		<h2>编辑打点区域</h2>
+			<p><span class="key">DELETE</span> &mdash; 删除选中区域</p>
+			<p><span class="key">ESC</span> &mdash; 取消当前编辑</p>
+			<!--<p><span class="key">SHIFT</span> &mdash; edit and save proportions for rectangle</p>-->
+			<p><span class="key">编辑状态选中热区双击</span> &mdash;编辑所选区域</p>
+			<p><span class="key">CTRL</span> + <span class="key">C</span> &mdash; 复制区域</p>
+			<p><span class="key">&uarr;</span> &mdash; 上移打点区域</p>
+			<p><span class="key">&darr;</span> &mdash; 下移打点区域</p>
+			<p><span class="key">&larr;</span> &mdash; 左移打点区域</p>
+			<p><span class="key">&rarr;</span> &mdash; 右移打点区域</p>
+		</section>
+	</div>
+	<footer>
+		<a href="https://github.com/matrixbingo/imgHotspots">matrixbingo切图控件 1.0</a><br />
+		&copy; 2014 https://github.com/matrixbingo/imgHotspots<br />
+		MIT License
+	</footer>
+</div>
+
+
+</body>
+</html>

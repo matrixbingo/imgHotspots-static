@@ -1,0 +1,5 @@
+#imgdiv { width:200px; padding:10px; margin-top:50px; overflow:hidden; border:1px solid #CCC; }
+#imgdiv .content p { padding: 0 8px; }
+#imgdiv .content img { border:0 none; }
+
+
