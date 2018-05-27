@@ -295,16 +295,17 @@ function SummerHtmlImageMapCreator() {
             container.addEventListener('dblclick', operaSvgKeydownBugFix, false);
         };
 
-        /* Add dblclick event for svg */
+        /* Add dblclick event for svg 双击弹出框设置区域信息*/
         function onAreaDblClick(e) {
             if (mode === 'editing') {
-                if (e.target.tagName === 'rect' || e.target.tagName === 'circle' || e.target.tagName === 'polygon' || e.target.tagName === 'way') {
+                window.console.log('onAreaDblClick 双击弹出框设置区域信息 已去掉')
+                /*if (e.target.tagName === 'rect' || e.target.tagName === 'circle' || e.target.tagName === 'polygon' || e.target.tagName === 'way') {
                     selected_area = e.target.parentNode.obj;
                     info.load(selected_area, e.pageX, e.pageY);
                     if(HotImgCut){
                         HotImgCut.onAreaDblClick(selected_area);
                     }
-                };
+                };*/
             };
         };
 
