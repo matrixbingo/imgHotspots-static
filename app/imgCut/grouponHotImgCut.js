@@ -253,16 +253,16 @@ HotImgCut.loadFromLocalStorageSun = function (imageMap, obj) {
  */
 HotImgCut.saveInLocalStorage = function (imageMap) {
 
-    /*
-     var val = FormUtil.$parent('#message_txt').val();
-     if (val.isNull()) {
-     FormUtil.$parent('#property_id').css('display', 'block');
-     window.parent.HotImg.click_link_text_Show();
-     ;
-     FormUtil.toast(window.parent.HotImg.message_txt);
-     return;
-     }
-     */
+/*
+    var val = FormUtil.$parent('#message_txt').val();
+    if (val.isNull()) {
+        FormUtil.$parent('#property_id').css('display', 'block');
+        window.parent.HotImg.click_link_text_Show();
+        ;
+        FormUtil.toast(window.parent.HotImg.message_txt);
+        return;
+    }
+*/
 
     var obj = {
         areas: [],
@@ -309,18 +309,17 @@ HotImgCut.replace = function (json) {
                 break;
         }
         obj.points = [];
-        var xy = {}
-        window.console.log(item.coords)
-        for (var i = 0; i < item.coords.length; i++) {
-            if (i % 2 === 0) {
-                i !== 0 && obj.points.push(xy);
-                xy = {}
-            } else {
-                if (i > 0) {
-                    xy[item.coords[i - 1]] = item.coords[i];
-                }
+        var xy = []
+        //window.console.log(item.coords)
+        $(item.coords).each(function (i, ele) {
+            if(i%2 === 0){
+                xy.push(ele);
+            }else{
+                xy.push(ele);
+                obj.points.push(xy);
+                xy = []
             }
-        }
+        });
         objs.push(obj);
     });
     return objs;
@@ -427,11 +426,11 @@ HotImgCut.checkareas = function (areas) {
 
     var objs = HotImgCut.imageMap.app.getObjects();
     /*if (objs && objs.length > 0) {
-     for (var i = 0; i < objs.length; i++) {
-     var item = objs[i];
-     this.checkObjs(item);
-     }
-     }*/
+        for (var i = 0; i < objs.length; i++) {
+            var item = objs[i];
+            this.checkObjs(item);
+        }
+    }*/
 
     return bool;
 };
