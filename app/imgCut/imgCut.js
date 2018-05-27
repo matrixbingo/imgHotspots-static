@@ -1,87 +1,9 @@
-/******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId]) {
-/******/ 			return installedModules[moduleId].exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			i: moduleId,
-/******/ 			l: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.l = true;
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
-/******/ 		}
-/******/ 	};
-/******/
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
-/******/
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
-/******/ })
-/************************************************************************/
-/******/ ([
-/* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(1);
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 /**
  * Created by wangliang on 2014/10/24.
  */
 
 
-
-
+"use strict";
 function SummerHtmlImageMapCreator() {
 
     /* Utilities */
@@ -217,7 +139,6 @@ function SummerHtmlImageMapCreator() {
         })()
     };
 
-
     /* Main object */
     var app = (function() {
         var body = document.getElementsByTagName('body')[0],
@@ -299,7 +220,7 @@ function SummerHtmlImageMapCreator() {
 
                         app.addEvent(container, 'mousemove', selected_area.onEdit)
                             .addEvent(container, 'mouseup', selected_area.onEditStop);
-                    } else if (e.target.tagName === 'rect' || e.target.tagName === 'circle' || e.target.tagName === 'polygon') {
+                    } else if (e.target.tagName === 'rect' || e.target.tagName === 'circle' || e.target.tagName === 'polygon'|| e.target.tagName === 'way') {
                         edit_type = 'move';
 
                         app.addEvent(container, 'mousemove', selected_area.onEdit)
@@ -343,12 +264,22 @@ function SummerHtmlImageMapCreator() {
                             .addEvent(new_area.helpers[0].helper, 'click', new_area.onDrawStop);
 
                         break;
+
+                    case 'way':
+                        new_area = new Way(utils.rightX(e.pageX), utils.rightY(e.pageY));
+
+                        app.addEvent(container, 'mousemove', new_area.onDraw)
+                            .addEvent(container, 'click', new_area.onDrawAddPoint)
+                            .addEvent(document, 'keydown', new_area.onDrawStop)
+                            .addEvent(document, 'dblclick', new_area.onDrawStop)
+                            .addEvent(new_area.helpers[0].helper, 'click', new_area.onDrawStop);
+
+                        break;
                 };
             };
         };
 
         container.addEventListener('click', onSvgClick, false);
-
 
 
         /* Bug with keydown event for SVG in Opera browser
@@ -367,7 +298,7 @@ function SummerHtmlImageMapCreator() {
         /* Add dblclick event for svg */
         function onAreaDblClick(e) {
             if (mode === 'editing') {
-                if (e.target.tagName === 'rect' || e.target.tagName === 'circle' || e.target.tagName === 'polygon') {
+                if (e.target.tagName === 'rect' || e.target.tagName === 'circle' || e.target.tagName === 'polygon' || e.target.tagName === 'way') {
                     selected_area = e.target.parentNode.obj;
                     info.load(selected_area, e.pageX, e.pageY);
                     if(HotImgCut){
@@ -481,6 +412,10 @@ function SummerHtmlImageMapCreator() {
                             case 'polygon':
                                 Constructor = Polygon;
                                 break;
+
+                            case 'way':
+                                Constructor = Way;
+                                break;
                         }
 
                         if (Constructor) {
@@ -572,6 +507,22 @@ function SummerHtmlImageMapCreator() {
                         case 'polygon':
                             if (x.coords.length >= 6 && x.coords.length % 2 === 0) {
                                 Polygon.createFromSaved({
+                                    coords : x.coords,
+                                    href   : x.href,
+                                    alt    : x.alt,
+                                    title  : x.title,
+
+                                    action_type     : x.action_type,
+                                    hover_message   : x.hover_message,
+                                    hover_img       : x.hover_img,
+                                    click_message   : x.click_message,
+                                    click_link      : x.click_link
+                                });
+                            }
+                            break;
+                        case 'way':
+                            if (x.coords.length >= 6 && x.coords.length % 2 === 0) {
+                                Way.createFromSaved({
                                     coords : x.coords,
                                     href   : x.href,
                                     alt    : x.alt,
@@ -1090,7 +1041,7 @@ function SummerHtmlImageMapCreator() {
                     for (var i = 0, len = coords.length; i < len; i++) {
                         coords[i] = Number(coords[i]);
                     }
-
+                    //window.console.log('test------>' + type)
                     switch (type) {
                         case 'rect':
                             if (coords.length === 4) {
@@ -1407,6 +1358,7 @@ function SummerHtmlImageMapCreator() {
             rectangle = utils.id('rect'),
             circle = utils.id('circle'),
             polygon = utils.id('polygon'),
+            way = utils.id('way'),
             edit = utils.id('edit'),
             clear = utils.id('clear'),
             from_html = utils.id('from_html'),
@@ -1445,7 +1397,7 @@ function SummerHtmlImageMapCreator() {
         }
 
         function onShapeButtonClick(e) {
-            // shape = rect || circle || polygon
+            // shape = rect || circle || polygon || way
             app.setMode('drawing')
                 .setDrawClass()
                 .setShape(this.id)
@@ -1557,9 +1509,10 @@ function SummerHtmlImageMapCreator() {
 
         save.addEventListener('click', onSaveButtonClick, false);
         load.addEventListener('click', onLoadButtonClick, false);
-        rectangle.addEventListener('click', onShapeButtonClick, false);
-        circle.addEventListener('click', onShapeButtonClick, false);
-        polygon.addEventListener('click', onShapeButtonClick, false);
+        rectangle && rectangle.addEventListener('click', onShapeButtonClick, false);
+        circle && circle.addEventListener('click', onShapeButtonClick, false);
+        polygon && polygon.addEventListener('click', onShapeButtonClick, false);
+        way && way.addEventListener('click', onShapeButtonClick, false);
         clear.addEventListener('click', onClearButtonClick, false);
         from_html.addEventListener('click', onFromHtmlButtonClick, false);
         to_html.addEventListener('click', onToHtmlButtonClick, false);
@@ -2816,6 +2769,384 @@ function SummerHtmlImageMapCreator() {
             this.top_left_delete.removeAll();;
         }
     };
+
+
+    /** 添加路径 Way **/
+    var Way = function(x, y){
+        app.setIsDraw(true);
+
+        this.type = 'way';
+
+        this.params = [x, y]; //array of coordinates of polygon points
+
+        this.href = ''; //href attribute - not required
+        this.alt = ''; //alt attribute - not required
+        this.title = ''; //title attribute - not required
+
+        this.action_type = '';
+        this.hover_message = '';
+        this.hover_img = '';
+        this.click_message = '';
+        this.click_link = '';
+
+        this.g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        this.polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+        app.addNodeToSvg(this.g);
+        this.g.appendChild(this.polygon);
+
+        this.g.obj = this; /* Link to parent object */
+
+        this.helpers = [ //array of all helpers-rectangles
+            new Helper(this.g, this.params[0], this.params[1])
+        ];
+
+        this.helpers[0].setAction('pointMove').setCursor('pointer').setId(0);
+
+        this.selected_point = -1;
+
+        this.select().redraw();
+
+        var _this = this,
+            params = getParams(x + app.getOffset('x') - 10, y + app.getOffset('y') - 10);
+        this.top_left_delete  = new FormUtil.toollip(params).create();
+        this.top_left_delete.getObj().bind('click', function(){
+            _this.top_left_delete.removeAll();;
+            app.deleteArea(_this);
+        });
+
+        app.addObject(this); //add this object to array of all objects
+    };
+
+    Way.prototype.setCoords = function(params){
+        var coords_values = params.join(' ');
+        this.polygon.setAttribute('points', coords_values);
+        utils.foreach(this.helpers, function(x, i) {
+            x.setCoords(params[2*i], params[2*i+1]);
+        });
+        //window.console.log('Way.prototype.setCoords', params)
+        var y = params[1] + app.getOffset('y'),
+            x = params[0] + app.getOffset('x');
+        //移动消息提示
+        if(this.msg){
+
+            this.msg.move(x, y);
+        }
+        if(this.top_left_delete){
+            this.top_left_delete.move(x - 10, y - 10);
+        }
+
+        return this;
+    };
+
+    Way.prototype.setParams = function(arr) {
+        this.params = Array.prototype.slice.call(arr);
+
+        return this;
+    };
+
+    Way.prototype.addPoint = function(x, y){
+        var helper = new Helper(this.g, x, y);
+        helper.setAction('pointMove').setCursor('pointer').setId(this.helpers.length);
+        this.helpers.push(helper);
+        this.params.push(x, y);
+        this.redraw();
+
+        return this;
+    };
+
+    Way.prototype.redraw = function() {
+        this.setCoords(this.params);
+
+        return this;
+    };
+
+    Way.prototype.right_angle = function(x, y){
+        var old_x = this.params[this.params.length-2],
+            old_y = this.params[this.params.length-1],
+            dx = x - old_x,
+            dy = - (y - old_y),
+            tan = dy/dx; //tangens
+
+        if (dx > 0 && dy > 0) {
+            if (tan > 2.414) {
+                x = old_x;
+            } else if (tan < 0.414) {
+                y = old_y;
+            } else {
+                Math.abs(dx) > Math.abs(dy) ? x = old_x + dy : y = old_y - dx;
+            }
+        } else if (dx < 0 && dy > 0) {
+            if (tan < -2.414) {
+                x = old_x;
+            } else if (tan >  -0.414) {
+                y = old_y;
+            } else {
+                Math.abs(dx) > Math.abs(dy) ? x = old_x - dy : y = old_y + dx;
+            }
+        } else if (dx < 0 && dy < 0) {
+            if (tan > 2.414) {
+                x = old_x;
+            } else if (tan < 0.414) {
+                y = old_y;
+            } else {
+                Math.abs(dx) > Math.abs(dy) ? x = old_x + dy : y = old_y - dx;
+            }
+        } else if (dx > 0 && dy < 0) {
+            if (tan < -2.414) {
+                x = old_x;
+            } else if (tan >  -0.414) {
+                y = old_y;
+            } else {
+                Math.abs(dx) > Math.abs(dy) ? x = old_x - dy : y = old_y + dx;
+            }
+        }
+
+        return {
+            x : x,
+            y : y
+        };
+    };
+
+    Way.prototype.dynamicDraw = function(x, y, right_angle){
+        var temp_params = [].concat(this.params);
+
+        if (right_angle) {
+            var right_coords = this.right_angle(x, y);
+            x = right_coords.x;
+            y = right_coords.y;
+        }
+
+        temp_params.push(x, y);
+
+        this.setCoords(temp_params);
+
+        return temp_params;
+    };
+
+    Way.prototype.onDraw = function(e) {
+        var _n_f = app.getNewArea();
+        var right_angle = e.shiftKey ? true : false;
+
+        _n_f.dynamicDraw(utils.rightX(e.pageX), utils.rightY(e.pageY), right_angle);
+    };
+
+    Way.prototype.onDrawAddPoint = function(e) {
+        var x = utils.rightX(e.pageX),
+            y = utils.rightY(e.pageY),
+
+            _n_f = app.getNewArea();
+
+        if (e.shiftKey) {
+            var right_coords = _n_f.right_angle(x, y);
+            x = right_coords.x;
+            y = right_coords.y;
+        }
+        _n_f.addPoint(x, y);
+    };
+
+    Way.prototype.onDrawStop = function(e) {
+        var _n_f = app.getNewArea();
+        if ( e.type == 'dblclick' || e.type == 'click' || (e.type == 'keydown' && e.keyCode == 13)) { // key Enter
+            if (_n_f.params.length >= 6) { //>= 3 points for polygon
+               /* _n_f.polyline = _n_f.polygon;
+                _n_f.polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                _n_f.g.replaceChild(_n_f.polygon, _n_f.polyline);
+                _n_f.setCoords(_n_f.params).deselect();
+                delete(_n_f.polyline);*/
+
+                app.removeAllEvents()
+                    .setIsDraw(false)
+                    .resetNewArea();
+            }
+        };
+        e.stopPropagation();
+
+        HotImgCut.type = 'way';
+        /** 点击编辑 **/
+        app.onEditButtonClick(e);
+    };
+
+    Way.prototype.move = function(x, y){ //offset x and y
+        var temp_params = Object.create(this.params);
+
+        for (var i = 0, count = this.params.length; i < count; i++) {
+            i % 2 ? this.params[i] += y : this.params[i] += x;
+        }
+
+        return temp_params;
+    };
+
+    Way.prototype.pointMove = function(x, y){ //offset x and y
+        this.params[2 * this.selected_point] += x;
+        this.params[2 * this.selected_point + 1] += y;
+
+        return this.params;
+    };
+
+    Way.prototype.dynamicEdit = function(temp_params) {
+        this.setCoords(temp_params);
+
+        return temp_params;
+    };
+
+    Way.prototype.onEdit = function(e) {
+        var _s_f = app.getSelectedArea(),
+            edit_type = app.getEditType();
+
+        _s_f.dynamicEdit(_s_f[edit_type](e.pageX - _s_f.delta.x, e.pageY - _s_f.delta.y));
+        _s_f.delta.x = e.pageX;
+        _s_f.delta.y = e.pageY;
+    };
+
+    Way.prototype.onEditStop = function(e) {
+        var _s_f = app.getSelectedArea(),
+            edit_type = app.getEditType();
+
+        _s_f.setParams(_s_f.dynamicEdit(_s_f[edit_type](e.pageX - _s_f.delta.x, e.pageY - _s_f.delta.y)));
+
+        app.removeAllEvents();
+    };
+
+    Way.prototype.remove = function(){
+        app.removeNodeFromSvg(this.g);
+    };
+
+    Way.prototype.select = function() {
+        utils.addClass(this.polygon, 'waySelected');
+
+        return this;
+    };
+
+    Way.prototype.deselect = function() {
+        utils.removeClass(this.polygon, 'selected');
+
+        return this;
+    };
+
+    Way.prototype.with_href = function() {
+        utils.addClass(this.polygon, 'with_href');
+
+        return this;
+    }
+
+    Way.prototype.without_href = function() {
+        utils.removeClass(this.polygon, 'with_href');
+
+        return this;
+    }
+
+    Way.prototype.toString = function() { //to html map area code
+        for (var i = 0, count = this.params.length, str = ''; i < count; i++) {
+            str += this.params[i];
+            if (i != count - 1) {
+                str += ', ';
+            }
+        }
+        return '<area shape="poly" coords="'
+            + str
+            + '"'
+            + (this.href ? ' href="' + this.href + '"' : '')
+            + (this.alt ? ' alt="' + this.alt + '"' : '')
+            + (this.title ? ' title="' + this.title + '"' : '')
+            + ' />';
+    };
+
+    Way.createFromSaved = function(params) {
+        var coords = params.coords,
+            href = params.href,
+            alt = params.alt,
+            title = params.title,
+
+            action_type = params.action_type,
+            hover_message = params.hover_message,
+            hover_img = params.hover_img,
+            click_message = params.click_message,
+            click_link = params.click_link,
+
+            area = new Way(coords[0], coords[1]);
+
+        for (var i = 2, c = coords.length; i < c; i+=2) {
+            area.addPoint(coords[i], coords[i+1]);
+        }
+
+        area.polyline = area.polygon;
+        area.polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+        area.g.replaceChild(area.polygon, area.polyline);
+        area.setCoords(area.params).deselect();
+        delete(area.polyline);
+
+        app.setIsDraw(false)
+            .resetNewArea();
+
+        if (href) {
+            area.href = href;
+        }
+
+        if (alt) {
+            area.alt = alt;
+        }
+
+        if (title) {
+            area.title = title;
+        }
+
+        if (action_type) {
+            area.action_type = action_type;
+        }
+
+        if (hover_message) {
+            area.hover_message = hover_message;
+        }
+
+        if (hover_img) {
+            area.hover_img = hover_img;
+        }
+
+        if (click_message) {
+            area.click_message = click_message;
+        }
+
+        if (click_link) {
+            area.click_link = click_link;
+        }
+    };
+
+    Way.prototype.toJSON = function() {
+        return {
+            type   : 'way',
+            coords : this.params,
+            href   : this.href,
+            alt    : this.alt,
+            title  : this.title,
+
+            action_type     : this.action_type,
+            hover_message   : this.hover_message,
+            hover_img       : this.hover_img,
+            click_message   : this.click_message,
+            click_link      : this.click_link
+        }
+    };
+
+    /**
+     * 添加消息提示
+     */
+    Way.prototype.addMsg = function(obj) {
+        this.msg = obj;
+    };
+    /**
+     * 删除消息提示
+     */
+    Way.prototype.removeMsg = function() {
+        if(this.msg){
+            this.msg.removeAll();
+        }
+    };
+    Way.prototype.removeDelete = function() {
+        if(this.top_left_delete){
+            this.top_left_delete.removeAll();;
+        }
+    };
+
     return {
         app     :   app,
         buttons :   buttons,
@@ -2823,16 +3154,12 @@ function SummerHtmlImageMapCreator() {
         Rect    :   Rect,
         Circle  :   Circle,
         Polygon :   Polygon,
+        Way     :   Way,
         info    :   info
     }
-
 };
 
 
 
 
 
-
-
-/***/ })
-/******/ ]);

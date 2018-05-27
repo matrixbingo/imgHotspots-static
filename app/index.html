@@ -2,10 +2,10 @@
 <html>
 <head>
 	<title>地图打点工具</title>
-	<link href="common/imgCut/main.css" type="text/css" rel="stylesheet" />
+	<link href="imgCut/main.css" type="text/css" rel="stylesheet" />
 	<meta charset="UTF-8" />
     <script type="text/javascript" src="common/jquery/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript" src="common/imgCut/imgCut.js"></script>
+    <script type="text/javascript" src="imgCut/imgCut.js"></script>
 
     <!--easyui 1.4 -->
     <link rel="stylesheet" type="text/css" href="common/jquery-easyui-1.4/easyui.css">
@@ -15,10 +15,10 @@
     <!-- msg -->
     <link rel="stylesheet" type="text/css" href="common/jquery.msg/jquery.msg.css">
     <script type="text/javascript" src="common/jquery.msg/jquery.msg.js"></script>
-    <script type="text/javascript" src="common/imgCut/jquery.corner.js"></script>
+    <script type="text/javascript" src="common/jquery/jquery.corner.js"></script>
 
-    <script type="text/javascript" src="common/imgCut/utils.js"></script>
-    <script type="text/javascript" src="common/imgCut/grouponHotImgCut.js"></script>
+    <script type="text/javascript" src="imgCut/utils.js"></script>
+    <script type="text/javascript" src="imgCut/grouponHotImgCut.js"></script>
     <script type="text/javascript">
 
     </script>
@@ -40,9 +40,10 @@
                 <a href="#" class="easyui-menubutton" data-options="menu:'#mm2',iconCls:'icon-edit'" style="padding: 0px 0px;">画图</a>
                 <div id="mm2" style="width:100px;">
                     <div id="rect">矩形</div>
-                    <div id="circle">圆形</div>
+                    <!--<div id="circle">圆形</div>-->
                     <div id="polygon">多边形</div>
                 </div>
+				<li id="way"><a href="#">路径</a></li>
 				<!--<li ><a href="#">矩形</a></li>-->
 				<!--<li ><a href="#">圆形</a></li>-->
 				<!--<li ><a href="#">多边形</a></li>-->
