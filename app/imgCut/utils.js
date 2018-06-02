@@ -565,6 +565,22 @@ DataUtil.encodeURI = function(a){
     return encodeURI(encodeURI(a));
 }
 
+/**
+ * 获取URL参数
+ */
+DataUtil.urlGet = function () {
+    var aQuery = window.location.href.split("?");
+    var aGET = {};
+    if (aQuery.length > 1) {
+        var aBuf = aQuery[1].split("&");
+        for (var i = 0, iLoop = aBuf.length; i < iLoop; i++) {
+            var aTmp = aBuf[i].split("=");
+            aGET[aTmp[0]] = aTmp[1];
+        }
+    }
+    return aGET;
+}
+
 /****************************  DataUtil end  ****************************/
 
 

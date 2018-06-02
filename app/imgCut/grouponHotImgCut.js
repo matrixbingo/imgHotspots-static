@@ -16,8 +16,8 @@ var HotImgCut = {
 
 $(function () {
     HotImgCut.imageMap = new SummerHtmlImageMapCreator();
-    var url = window.parent.imgCutUtil ? window.parent.imgCutUtil.url : "http://img4.imgtn.bdimg.com/it/u=1115476906,614857416&fm=27&gp=0.jpg";
-    HotImgCut.base = window.parent.imgCutUtil ? window.parent.imgCutUtil.base : "http://localhost:63342";
+    var url = "qw.png";
+    HotImgCut.base = "http://localhost:63342";
 
     //隐藏不需要的按钮
     var ids = 'new_image,from_html,hotimg_p1,hotimg_p2,hotimg_p3,to_html,load,save,action_type,preview,edit,edit_details';
@@ -253,16 +253,15 @@ HotImgCut.loadFromLocalStorageSun = function (imageMap, obj) {
  */
 HotImgCut.saveInLocalStorage = function (imageMap) {
 
-/*
-    var val = FormUtil.$parent('#message_txt').val();
-    if (val.isNull()) {
-        FormUtil.$parent('#property_id').css('display', 'block');
-        window.parent.HotImg.click_link_text_Show();
-        ;
-        FormUtil.toast(window.parent.HotImg.message_txt);
-        return;
-    }
-*/
+    /*
+     var val = FormUtil.$parent('#message_txt').val();
+     if (val.isNull()) {
+     FormUtil.$parent('#property_id').css('display', 'block');
+     window.parent.HotImg.click_link_text_Show();
+     FormUtil.toast(window.parent.HotImg.message_txt);
+     return;
+     }
+     */
 
     var obj = {
         areas: [],
@@ -312,9 +311,9 @@ HotImgCut.replace = function (json) {
         var xy = []
         //window.console.log(item.coords)
         $(item.coords).each(function (i, ele) {
-            if(i%2 === 0){
+            if (i % 2 === 0) {
                 xy.push(ele);
-            }else{
+            } else {
                 xy.push(ele);
                 obj.points.push(xy);
                 xy = []
@@ -361,10 +360,10 @@ HotImgCut.refresh = function (json) {
  * 加载数据
  */
 HotImgCut.ajaxGetNewImgCut = function (url, imageMap) {
-    var url = HotImgCut.base + '/grouponImgHotCut/ajaxGetNewImgCut.action';
+    var url = 'indoorlocation/imgpoints';
     var param = {'url': HotImgCut.url};
     HotImgCut.initImgInfo(imageMap, HotImgCut.url);
-    HotImgCut.getAjaxDatas(url, param, function (resp) {
+    HotImgCut.get(url, param, function (resp) {
         if (resp == null || resp == 'null') {
             return;
         } else if (resp == "timeout" || resp.data == 'undefined') {
@@ -426,11 +425,11 @@ HotImgCut.checkareas = function (areas) {
 
     var objs = HotImgCut.imageMap.app.getObjects();
     /*if (objs && objs.length > 0) {
-        for (var i = 0; i < objs.length; i++) {
-            var item = objs[i];
-            this.checkObjs(item);
-        }
-    }*/
+     for (var i = 0; i < objs.length; i++) {
+     var item = objs[i];
+     this.checkObjs(item);
+     }
+     }*/
 
     return bool;
 };
@@ -576,6 +575,15 @@ HotImgCut.hideEditDetails = function () {
     $('#edit_details').hide();
 };
 
+
+HotImgCut.getRootUrl = function () {
+    var pathName = window.location.pathname.substring(1);
+    var webName = pathName == '' ? '' : pathName.substring(0, pathName.indexOf('/'));
+    return window.location.protocol + '//' + window.location.host + '/';
+}
+
+HotImgCut.base_url = HotImgCut.getRootUrl();
+
 HotImgCut.getAjaxDatas = function (url, data, callBack) {
     $.ajax(
         {
@@ -584,10 +592,10 @@ HotImgCut.getAjaxDatas = function (url, data, callBack) {
             data: data,
             dataType: "json",
             timeout: 15000,
-            beforeSend: window.parent.progressStart(),
+            beforeSend: FormUtil.progressStart(),
             error: function (result) {
                 console.log('result ----> : ' + result);
-                window.parent.progressClose();
+                FormUtil.progressClose();
                 if (result.responseText == 'success') {
                     FormUtil.toast('保存成功!!', 1500);
                 } else {
@@ -596,7 +604,7 @@ HotImgCut.getAjaxDatas = function (url, data, callBack) {
             },
             success: function (result) {
                 try {
-                    window.parent.progressClose();
+                    FormUtil.progressClose();
                     callBack(result);
                 } catch (e) {
                     console.log('加载数据异常 ⊙﹏⊙!!' + url);
@@ -604,7 +612,7 @@ HotImgCut.getAjaxDatas = function (url, data, callBack) {
                 }
             },
             complete: function (e, t) {
-                window.parent.progressClose();
+                FormUtil.progressClose();
                 if (t && t == "timeout") {
                     FormUtil.toast('加载超时，网络服务不给力⊙﹏⊙!!', 1500);
                     callBack(t);
@@ -613,5 +621,95 @@ HotImgCut.getAjaxDatas = function (url, data, callBack) {
         }
     )
 }
+
+/**
+ * aja 依赖jquery 根据url发送ajax请求
+ * @param url
+ * @param data : 参数
+ * @param callBack ：回调函数
+ */
+
+HotImgCut.getAjaxUrl = function (type, address) {
+    var postfix = "";
+    if (window.location.origin.toLowerCase().indexOf("localhost") != -1) {
+        type = 'GET';
+        postfix = ".json";
+    }
+
+    if (window.location.search.toLowerCase().indexOf('dev') > -1) {
+        var params = DataUtil.urlGet();
+        HotImgCut.dev = params['dev'];
+        localStorage.setItem('dev', HotImgCut.dev);
+        if (HotImgCut.dev == 1) {
+            HotImgCut.ajax_url = HotImgCut.base_url + 'mock/';
+        } else {
+            HotImgCut.ajax_url = HotImgCut.base_url;
+        }
+    } else {
+        var dev = localStorage.getItem('dev');
+        if (dev) {
+            HotImgCut.dev = dev;
+            if (HotImgCut.dev == 1) {
+                HotImgCut.ajax_url = HotImgCut.base_url + 'mock/';
+            } else {
+                HotImgCut.ajax_url = HotImgCut.base_url;
+            }
+        }
+    }
+    return {url: HotImgCut.ajax_url + address + postfix, type: type};
+};
+
+HotImgCut.ajax = function (type, address, data, callBack) {
+    var d = this.getAjaxUrl(type, address);
+    var url = d.url, type = d.type;
+    var json = JSON.stringify(data);
+    window.console.log(type + " : " + url , data ," \n" + json);
+    $.ajax(
+        {
+            type: type,
+            url: url + "?uid=" + new Date(),
+            data: json,
+            dataType: "json",
+            contentType: "application/json",
+            timeout: 15000,
+            beforeSend: HotImgCut.progressStart(),
+            error: function (e) {
+                console.error('error 加载异常：' + url);
+                console.error(e);
+            },
+            success: function (result) {
+                try {
+                    HotImgCut.log("result ===>", result);
+                    callBack(result);
+                } catch (e) {
+                    console.error('success 加载异常：' + url);
+                }
+            },
+            complete: function (e, t) {
+                if (t && t == "timeout") {
+                    console.error('complete 请求超时：' + url);
+                    callBack(t);
+                }
+            }
+        }
+    )
+};
+
+HotImgCut.post = function (address, data, callBack) {
+    try {
+        HotImgCut.ajax("POST", address, data, callBack);
+    } catch (e) {
+    } finally {
+
+    }
+};
+
+HotImgCut.get = function (address, data, callBack) {
+    try {
+        HotImgCut.ajax("GET", address, data, callBack);
+    } catch (e) {
+    } finally {
+    }
+};
 
 
